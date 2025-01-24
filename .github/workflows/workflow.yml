@@ -28,12 +28,12 @@ jobs:
           distribution: 'microsoft'
 
       - name: Build with Maven
-        run: mvn clean install -f UserService/pom.xml
+        run: mvn clean install -f ActionAlarm/pom.xml
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: java-app
-          path: '${{ github.workspace }}/UserService/target/*.jar'
+          path: '${{ github.workspace }}/ActionAlarm/target/*.jar'
 
 
