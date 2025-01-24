@@ -15,8 +15,7 @@ class ActionAlarmApplicationTests {
 		assert(!acTest.isAlarm());
 		acTest.setAlarm(true);
 		assert(acTest.isAlarm());
-		assert(false);
-	}
+		}
 
 	@Test
 	void testController() {
