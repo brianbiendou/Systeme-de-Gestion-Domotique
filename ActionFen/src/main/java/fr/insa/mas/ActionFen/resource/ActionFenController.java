@@ -27,12 +27,6 @@ public class ActionFenController {
         actionfenService.updateFenetre(fenetreOuverte);
     }
 
-    // Endpoint pour récupérer l'état de la fenêtre
-    @GetMapping("/fenetre")
-    public boolean getFenetre() {
-        return actionfenService.getActionneurState();
-    }
-    
     /*
     // Classe interne pour recevoir les données JSON de la fenêtre
     public static class FenetreRequest {

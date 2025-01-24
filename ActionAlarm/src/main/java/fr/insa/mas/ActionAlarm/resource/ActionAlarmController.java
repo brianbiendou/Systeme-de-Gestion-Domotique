@@ -29,13 +29,5 @@ public class ActionAlarmController {
         actionalarmService.updateAlarm(alarmeActivee);
     }
 
-    // Supprimer la classe interne AlarmRequest
-
-    
-    // Endpoint pour récupérer l'état de l'alarme
-    @GetMapping("/alarm")
-    public boolean getAlarme() {
-        return actionalarmService.getActionneurState();
-    }
 
 }

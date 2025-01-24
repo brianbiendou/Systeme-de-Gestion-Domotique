@@ -1,7 +1,8 @@
 package fr.insa.mas.ActionAlarm.model;
 
 public class ActionAlarm {
-    private boolean alarme;
+    
+	private boolean alarme;
     
     public boolean isAlarm() {
         return alarme;
