@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestionnaire des Capteurs</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h2>Gestionnaire des Capteurs et Actionneurs</h2>
+    <div class="container">
+        <!-- Colonne 1 -->
+        <div class="column">
+            <h3>Température</h3>
+            <label>Température intérieure :</label>
+            <input type="number" id="internalTemperature" placeholder="Entrez la température intérieure">
+            <button onclick="updateInternalTemperature()">Envoyer</button>
+
+            <label>Température extérieure :</label>
+            <input type="number" id="externalTemperature" placeholder="Entrez la température extérieure">
+            <button onclick="updateExternalTemperature()">Envoyer</button>
+
+            <h3>Présence</h3>
+            <label>Présence détectée (oui/non) :</label>
+            <input type="text" id="presenceStatus" placeholder="Entrez oui ou non">
+            <button onclick="updatePresence()">Envoyer</button>
+        </div>
+
+        <!-- Colonne 2 -->
+        <div class="column">
+            <h3>État des Actionneurs</h3>
+            <p id="windowState">État des fenêtres : Non disponible</p>
+            <p id="alarmState">État de l'alarme : Non disponible</p>
+        </div>
+    </div>
+    <script src="scripts.js"></script>
+</body>
+</html>

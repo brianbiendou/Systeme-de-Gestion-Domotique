@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Système de Gestion Domotique</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #2ecc71;
+            --warning-color: #e74c3c;
+            --bg-color: #ecf0f1;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--bg-color);
+        }
+
+        .container {
+            display: flex;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .column {
+            flex: 1;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        h1, h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--primary-color);
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .status {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+        }
+
+        .active {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .inactive {
+            background-color: var(--warning-color);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>Système de Gestion Domotique</h1>
+    
+    <div class="container">
+        <div class="column">
+            <h2>Capteurs</h2>
+            <div class="input-group">
+                <label>Température Intérieure (°C)</label>
+                <input type="number" id="internalTemp" step="0.1">
+                <button onclick="updateInternalTemperature()">Mettre à jour</button>
+            </div>
+
+            <div class="input-group">
+                <label>Température Extérieure (°C)</label>
+                <input type="number" id="externalTemp" step="0.1">
+                <button onclick="updateExternalTemperature()">Mettre à jour</button>
+            </div>
+
+            <div class="input-group">
+                <label>Présence</label>
+                <select id="presence">
+                    <option value="true">Présent</option>
+                    <option value="false">Absent</option>
+                </select>
+                <button onclick="updatePresence()">Mettre à jour</button>
+            </div>
+        </div>
+
+        <div class="column">
+            <h2>État du Système</h2>
+            <div id="windowStatus" class="status">État Fenêtre : Chargement...</div>
+            <div id="alarmStatus" class="status">État Alarme : Chargement...</div>
+        </div>
+    </div>
+
+    <script>
+        const API_URLS = {
+            temperature: 'http://localhost:8081/api/temperature',
+            presence: 'http://localhost:8082/api/presence',
+            window: 'http://localhost:8083/api/actionfen',
+            alarm: 'http://localhost:8084/api/actionalarm'
+        };
+     
+        const fetchOptions = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            mode: 'cors'
+        };
+     
+        async function updateInternalTemperature() {
+            const temp = document.getElementById('internalTemp').value;
+            try {
+                await fetch(`${API_URLS.temperature}/internal`, {
+                    ...fetchOptions,
+                    method: 'POST',
+                    body: JSON.stringify(parseFloat(temp))
+                });
+                updateStatus();
+            } catch (error) {
+                console.error('Erreur:', error);
+            }
+        }
+     
+        async function updateExternalTemperature() {
+            const temp = document.getElementById('externalTemp').value;
+            try {
+                await fetch(`${API_URLS.temperature}/external`, {
+                    ...fetchOptions,
+                    method: 'POST',
+                    body: JSON.stringify(parseFloat(temp))
+                });
+                updateStatus();
+            } catch (error) {
+                console.error('Erreur:', error);
+            }
+        }
+     
+        async function updatePresence() {
+            const presence = document.getElementById('presence').value === 'true';
+            try {
+                await fetch(`${API_URLS.presence}/update`, {
+                    ...fetchOptions,
+                    method: 'POST',
+                    body: JSON.stringify(presence)
+                });
+                updateStatus();
+            } catch (error) {
+                console.error('Erreur:', error);
+            }
+        }
+     
+        async function updateStatus() {
+            try {
+                const [internalTemp, externalTemp, presenceData, windowState, alarmState] = await Promise.all([
+                    fetch(`${API_URLS.temperature}/internal`, fetchOptions).then(res => res.json()),
+                    fetch(`${API_URLS.temperature}/external`, fetchOptions).then(res => res.json()),
+                    fetch(`${API_URLS.presence}/latest`, fetchOptions).then(res => res.json()),
+                    fetch(`${API_URLS.window}/etat`, fetchOptions).then(res => res.json()),
+                    fetch(`${API_URLS.alarm}/etat`, fetchOptions).then(res => res.json())
+                ]);
+     
+                //document.getElementById('internalTemp').value = internalTemp;
+                //document.getElementById('externalTemp').value = externalTemp;
+     
+                const windowStatus = document.getElementById('windowStatus');
+                windowStatus.textContent = `État Fenêtre : ${windowState ? 'Ouverte' : 'Fermée'}`;
+                windowStatus.className = `status ${windowState ? 'active' : 'inactive'}`;
+     
+                const alarmStatus = document.getElementById('alarmStatus');
+                alarmStatus.textContent = `État Alarme : ${alarmState ? 'Activée' : 'Désactivée'}`;
+                alarmStatus.className = `status ${alarmState ? 'active' : 'inactive'}`;
+            } catch (error) {
+                console.error('Erreur:', error);
+            }
+        }
+     
+        setInterval(updateStatus, 5000);
+        updateStatus();
+     </script>
+</body>
+</html>
