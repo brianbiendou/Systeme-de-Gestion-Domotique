@@ -27,7 +27,7 @@ jobs:
           java-version: '21'
           distribution: 'microsoft'
 
-      - name: Build with Maven
+      - name: Build ActionAlarm with Maven
         run: mvn clean install -f ActionAlarm/pom.xml
 
       - name: Upload artifact for deployment job
@@ -35,5 +35,32 @@ jobs:
         with:
           name: java-app
           path: '${{ github.workspace }}/ActionAlarm/target/*.jar'
+
+      - name: Build ActionFen with Maven
+        run: mvn clean install -f ActionFen/pom.xml
+
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v4
+        with:
+          name: java-app
+          path: '${{ github.workspace }}/ActionFen/target/*.jar'
+
+      - name: Build Presence with Maven
+        run: mvn clean install -f presence/pom.xml
+
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v4
+        with:
+          name: java-app
+          path: '${{ github.workspace }}/presence/target/*.jar'
+
+      - name: Build Temperature with Maven
+        run: mvn clean install -f temperature/pom.xml
+
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v4
+        with:
+          name: java-app
+          path: '${{ github.workspace }}/temperature/target/*.jar'
 
 
